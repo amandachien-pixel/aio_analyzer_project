@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIO 潛力分析器 - 本地預覽</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 頂部導航 -->
+    <nav class="gradient-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-robot text-white text-2xl mr-3"></i>
+                    <h1 class="text-white text-xl font-bold">AIO 潛力分析器</h1>
+                    <span class="ml-2 bg-yellow-400 text-gray-900 px-2 py-1 rounded-full text-xs font-semibold">預覽版</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-white text-sm">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span id="current-time"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 歡迎區塊 -->
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">AI Overview 潛力分析</h2>
+            <p class="text-lg text-gray-600 mb-6">分析您的關鍵字在 Google AI Overview 中的觸發潛力</p>
+        </div>
+
+        <!-- 主要功能區域 -->
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <!-- 左側：分析控制面板 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 card-hover transition-all duration-300">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-cogs text-blue-500 mr-2"></i>
+                    分析設定
+                </h3>
+                
+                <form id="analysis-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">網站 URL</label>
+                        <input type="text" id="site_url" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                               placeholder="sc-domain:your-domain.com" value="sc-domain:example.com">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">開始日期</label>
+                            <input type="date" id="start_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">結束日期</label>
+                            <input type="date" id="end_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">關鍵字篩選模式</label>
+                        <select id="regex_pattern" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="^(what|how|why|when|where|who|which)\b">英文問句型</option>
+                            <option value="^(什麼|如何|為什麼|怎麼|哪裡|誰|哪個)\b">中文問句型</option>
+                            <option value=".*">所有關鍵字</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="start-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-play mr-2"></i>
+                        開始分析
+                    </button>
+                </form>
+
+                <!-- API 狀態檢查 -->
+                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h4 class="font-semibold text-gray-700 mb-2">API 狀態</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Google Search Console:</span>
+                            <span class="text-yellow-600" id="gsc-status">⚠️ 演示模式</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Google Ads API:</span>
+                            <span class="text-yellow-600" id="ads-status">⚠️ 演示模式</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>SERP API:</span>
+                            <span class="text-yellow-600" id="serp-status">⚠️ 演示模式</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側：分析進度 -->
+            <div class="bg-white rounded-lg shadow-lg p-6 card-hover transition-all duration-300">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                    分析進度
+                </h3>
+                
+                <div id="progress-section" class="hidden">
+                    <!-- 進度條 -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm text-gray-600 mb-1">
+                            <span id="progress-text">等待開始</span>
+                            <span id="progress-percent">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 步驟指示器 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center step" data-step="gsc_extraction">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                            <span class="text-gray-600">GSC 數據擷取</span>
+                        </div>
+                        <div class="flex items-center step" data-step="keyword_expansion">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                                <i class="fas fa-expand-arrows-alt text-gray-400"></i>
+                            </div>
+                            <span class="text-gray-600">關鍵字擴展</span>
+                        </div>
+                        <div class="flex items-center step" data-step="aio_validation">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                                <i class="fas fa-robot text-gray-400"></i>
+                            </div>
+                            <span class="text-gray-600">AIO 驗證</span>
+                        </div>
+                        <div class="flex items-center step" data-step="report_generation">
+                            <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3">
+                                <i class="fas fa-file-alt text-gray-400"></i>
+                            </div>
+                            <span class="text-gray-600">報告生成</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 默認提示 -->
+                <div id="default-prompt" class="text-center py-8">
+                    <i class="fas fa-play-circle text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">點擊「開始分析」來查看您的 AIO 潛力</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果展示區域 -->
+        <div id="results-section" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                    分析結果
+                </h3>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-6">
+                    <!-- 統計卡片 -->
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100">總關鍵字</p>
+                                <p class="text-2xl font-bold" id="total-keywords">-</p>
+                            </div>
+                            <i class="fas fa-key text-blue-200 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100">觸發 AIO</p>
+                                <p class="text-2xl font-bold" id="aio-keywords">-</p>
+                            </div>
+                            <i class="fas fa-robot text-green-200 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-4 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100">觸發率</p>
+                                <p class="text-2xl font-bold" id="aio-percentage">-</p>
+                            </div>
+                            <i class="fas fa-percentage text-purple-200 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100">平均搜尋量</p>
+                                <p class="text-2xl font-bold" id="avg-volume">-</p>
+                            </div>
+                            <i class="fas fa-search text-orange-200 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按鈕 -->
+                <div class="flex space-x-4">
+                    <button id="download-btn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-download mr-2"></i>
+                        下載報告
+                    </button>
+                    <button id="demo-data-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-eye mr-2"></i>
+                        查看演示數據
+                    </button>
+                    <button id="new-analysis-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
+                        <i class="fas fa-redo mr-2"></i>
+                        新增分析
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能介紹 -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-lg p-6 card-hover transition-all duration-300">
+                <div class="text-center">
+                    <i class="fas fa-search text-4xl text-blue-500 mb-4"></i>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">M1: 數據擷取</h4>
+                    <p class="text-gray-600">從 Google Search Console 擷取您網站的搜尋關鍵字和效能數據</p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 card-hover transition-all duration-300">
+                <div class="text-center">
+                    <i class="fas fa-expand-arrows-alt text-4xl text-green-500 mb-4"></i>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">M2: 關鍵字擴展</h4>
+                    <p class="text-gray-600">使用 Google Ads API 擴展關鍵字，獲取搜尋量和競爭數據</p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 card-hover transition-all duration-300">
+                <div class="text-center">
+                    <i class="fas fa-robot text-4xl text-purple-500 mb-4"></i>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2">M3: AIO 驗證</h4>
+                    <p class="text-gray-600">程式化驗證關鍵字是否觸發 Google AI Overview</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示區塊 -->
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg">
+            <div class="flex">
+                <i class="fas fa-info-circle text-blue-400 text-xl mr-3 mt-1"></i>
+                <div>
+                    <h4 class="text-lg font-semibold text-blue-900 mb-2">本地預覽說明</h4>
+                    <ul class="text-blue-800 space-y-1">
+                        <li>• 這是 AIO 分析器的本地預覽版本，展示完整的分析流程</li>
+                        <li>• 在沒有 API 憑證的情況下，系統將使用模擬數據進行演示</li>
+                        <li>• 要使用真實數據，請參考文檔配置相關 API 憑證</li>
+                        <li>• 完整版本支援更多進階功能和自定義設定</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let analysisInterval;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // 設定默認日期
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            document.getElementById('start_date').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('end_date').value = today.toISOString().split('T')[0];
+        });
+        
+        // 更新時間
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleString('zh-TW');
+        }
+        
+        // 表單提交
+        document.getElementById('analysis-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            startAnalysis();
+        });
+        
+        // 開始分析
+        async function startAnalysis() {
+            const formData = {
+                site_url: document.getElementById('site_url').value,
+                start_date: document.getElementById('start_date').value,
+                end_date: document.getElementById('end_date').value,
+                regex_pattern: document.getElementById('regex_pattern').value
+            };
+            
+            try {
+                const response = await fetch('/api/start_analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'started') {
+                    showProgressSection();
+                    startProgressTracking();
+                } else {
+                    alert('分析啟動失敗: ' + result.message);
+                }
+            } catch (error) {
+                alert('請求失敗: ' + error.message);
+            }
+        }
+        
+        // 顯示進度區域
+        function showProgressSection() {
+            document.getElementById('default-prompt').classList.add('hidden');
+            document.getElementById('progress-section').classList.remove('hidden');
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('start-btn').innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>分析中...';
+        }
+        
+        // 開始追蹤進度
+        function startProgressTracking() {
+            analysisInterval = setInterval(checkAnalysisStatus, 1000);
+        }
+        
+        // 檢查分析狀態
+        async function checkAnalysisStatus() {
+            try {
+                const response = await fetch('/api/analysis_status');
+                const status = await response.json();
+                
+                updateProgress(status);
+                
+                if (status.current_step === 'completed' || status.current_step === 'error') {
+                    clearInterval(analysisInterval);
+                    handleAnalysisComplete(status);
+                }
+            } catch (error) {
+                console.error('狀態檢查失敗:', error);
+            }
+        }
+        
+        // 更新進度
+        function updateProgress(status) {
+            // 更新進度條
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const progressPercent = document.getElementById('progress-percent');
+            
+            progressBar.style.width = status.progress + '%';
+            progressText.textContent = status.message;
+            progressPercent.textContent = status.progress + '%';
+            
+            // 更新步驟指示器
+            updateStepIndicators(status.current_step);
+        }
+        
+        // 更新步驟指示器
+        function updateStepIndicators(currentStep) {
+            const steps = document.querySelectorAll('.step');
+            
+            steps.forEach(step => {
+                const stepName = step.getAttribute('data-step');
+                const circle = step.querySelector('div');
+                const icon = step.querySelector('i');
+                const text = step.querySelector('span');
+                
+                if (stepName === currentStep) {
+                    // 當前步驟
+                    circle.className = 'w-8 h-8 rounded-full border-2 border-blue-500 bg-blue-500 flex items-center justify-center mr-3 pulse-dot';
+                    icon.className = icon.className.replace('text-gray-400', 'text-white');
+                    text.className = 'text-blue-600 font-semibold';
+                } else {
+                    // 其他步驟
+                    circle.className = 'w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-3';
+                    icon.className = icon.className.replace('text-white', 'text-gray-400');
+                    text.className = 'text-gray-600';
+                }
+            });
+        }
+        
+        // 處理分析完成
+        function handleAnalysisComplete(status) {
+            if (status.current_step === 'completed') {
+                showResults(status.results);
+            } else {
+                alert('分析失敗: ' + status.message);
+            }
+            
+            // 重置按鈕
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('start-btn').innerHTML = '<i class="fas fa-play mr-2"></i>開始分析';
+        }
+        
+        // 顯示結果
+        function showResults(results) {
+            document.getElementById('total-keywords').textContent = results.total_keywords || 0;
+            document.getElementById('aio-keywords').textContent = results.aio_keywords || 0;
+            document.getElementById('aio-percentage').textContent = 
+                results.total_keywords > 0 ? 
+                Math.round((results.aio_keywords / results.total_keywords) * 100) + '%' : '0%';
+            document.getElementById('avg-volume').textContent = '1.2K';  // 模擬數據
+            
+            document.getElementById('results-section').classList.remove('hidden');
+        }
+        
+        // 下載報告
+        document.getElementById('download-btn').addEventListener('click', async function() {
+            try {
+                // 獲取最新報告信息
+                const response = await fetch('/api/latest_report');
+                const reportInfo = await response.json();
+                
+                if (reportInfo.download_url) {
+                    // 創建下載連結
+                    const link = document.createElement('a');
+                    link.href = reportInfo.download_url;
+                    link.download = 'aio_analysis_report.csv';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // 顯示成功訊息
+                    alert('報告下載已開始！');
+                } else {
+                    alert('沒有找到可下載的報告');
+                }
+            } catch (error) {
+                // 如果 API 失敗，使用備用方案
+                const link = document.createElement('a');
+                link.href = '/download_report/demo_aio_analysis_20250822_153305.csv';
+                link.download = 'aio_analysis_report.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.error('下載錯誤:', error);
+            }
+        });
+        
+        // 查看演示數據
+        document.getElementById('demo-data-btn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/demo_data');
+                const data = await response.json();
+                
+                alert('演示數據:\n' + 
+                     'GSC 查詢: ' + data.gsc_data.total_queries + ' 個\n' +
+                     '擴展關鍵字: ' + data.expanded_keywords.total_keywords + ' 個\n' +
+                     'AIO 觸發: ' + data.aio_validation.aio_triggers + ' 個 (' + 
+                     data.aio_validation.aio_percentage + '%)'
+                );
+            } catch (error) {
+                alert('無法獲取演示數據');
+            }
+        });
+        
+        // 新增分析
+        document.getElementById('new-analysis-btn').addEventListener('click', function() {
+            document.getElementById('progress-section').classList.add('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('default-prompt').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

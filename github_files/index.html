@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AIO 分析器測試網站 - SiEtrendforce 專案，用於 Google Search Console API 測試和 AI Overview 分析">
+    <meta name="keywords" content="AIO,AI Overview,SEO,分析器,搜尋引擎優化,SiEtrendforce,關鍵字分析,SERP分析">
+    <meta name="author" content="SiEtrendforce">
+    <title>AIO 分析器測試網站 | SiEtrendforce AI Overview 分析工具</title>
+    
+    <!-- Google Search Console 驗證標籤 - 稍後添加 -->
+    <!-- <meta name="google-site-verification" content="您的驗證碼"> -->
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .content-wrapper {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 10px 5px;
+            font-size: 0.9em;
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+        
+        .keywords-section {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .keywords-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .keywords-list {
+            color: #664d03;
+            font-style: italic;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .cta-section {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 10px;
+            margin: 40px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .features-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .footer-links {
+            margin: 20px 0;
+        }
+        
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2em;
+            }
+            
+            main {
+                padding: 20px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-wrapper">
+            <header>
+                <h1>🤖 AIO 分析器測試網站</h1>
+                <p class="subtitle">AI Overview 潛力分析工具 - SiEtrendforce 專案</p>
+                <div>
+                    <span class="badge">🔍 SERP 分析</span>
+                    <span class="badge">🤖 AI Overview 檢測</span>
+                    <span class="badge">📊 關鍵字研究</span>
+                    <span class="badge">📈 SEO 優化</span>
+                </div>
+            </header>
+
+            <main>
+                <section class="intro">
+                    <h2>🎯 什麼是 AI Overview？</h2>
+                    <p>AI Overview 是 Google 搜尋結果中由人工智慧生成的概述內容，為用戶提供快速且全面的答案。這項革命性功能正在重新定義 SEO 策略，讓內容創作者需要重新思考如何優化內容以在 AI 驅動的搜尋環境中獲得曝光。</p>
+                </section>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3><span class="card-icon">🔍</span>AI Overview 基礎知識</h3>
+                        <p>了解 Google AI Overview 的工作原理，以及它如何從多個來源整合資訊來生成綜合性答案。</p>
+                        
+                        <div class="keywords-section">
+                            <div class="keywords-title">相關關鍵字：</div>
+                            <div class="keywords-list">什麼是 AI Overview, AI Overview 原理, Google AI Overview 功能, AI 搜尋結果</div>
+                        </div>
+                        
+                        <ul class="features-list">
+                            <li>多來源資訊整合</li>
+                            <li>實時內容生成</li>
+                            <li>上下文理解能力</li>
+                            <li>個性化回答調整</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3><span class="card-icon">🎯</span>如何優化 AI Overview？</h3>
+                        <p>掌握針對 AI Overview 的內容優化策略，提升您的內容在 AI 生成答案中被引用的機會。</p>
+                        
+                        <div class="keywords-section">
+                            <div class="keywords-title">相關關鍵字：</div>
+                            <div class="keywords-list">AI Overview 優化技巧, 如何優化 AI Overview, AI Overview SEO 策略, Google AI 優化方法</div>
+                        </div>
+                        
+                        <ul class="features-list">
+                            <li>結構化內容編寫</li>
+                            <li>權威性來源建立</li>
+                            <li>語義搜尋優化</li>
+                            <li>Featured Snippets 優化</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3><span class="card-icon">📊</span>AIO 分析器工具功能</h3>
+                        <p>我們的 AIO 分析器提供全面的 AI Overview 潛力分析，幫助您識別最有價值的關鍵字機會。</p>
+                        
+                        <div class="keywords-section">
+                            <div class="keywords-title">相關關鍵字：</div>
+                            <div class="keywords-list">AIO 分析工具, AI Overview 檢測器, SERP 分析軟體, 關鍵字 AI 潛力分析</div>
+                        </div>
+                        
+                        <ul class="features-list">
+                            <li>Google Search Console 整合</li>
+                            <li>Serper API 即時檢測</li>
+                            <li>關鍵字擴展分析</li>
+                            <li>詳細報告生成</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3><span class="card-icon">🚀</span>開始使用指南</h3>
+                        <p>快速上手我們的 AIO 分析器，從安裝到分析，一步步指導您完成完整的設定流程。</p>
+                        
+                        <div class="keywords-section">
+                            <div class="keywords-title">相關關鍵字：</div>
+                            <div class="keywords-list">AIO 分析器教學, 如何使用 AIO 工具, AI Overview 分析步驟, SEO 工具使用指南</div>
+                        </div>
+                        
+                        <ul class="features-list">
+                            <li>API 金鑰設定</li>
+                            <li>網站驗證流程</li>
+                            <li>分析參數配置</li>
+                            <li>結果解讀技巧</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>🔬 AI Overview 研究洞察</h3>
+                    <p>根據我們的研究，AI Overview 更傾向於引用具有以下特徵的內容：<strong>結構清晰、資訊準確、權威性高、語言自然</strong>的文章。問答式內容和步驟指南特別容易被 AI Overview 選中。</p>
+                </div>
+
+                <section class="cta-section">
+                    <h2>🎯 準備開始 AI Overview 優化了嗎？</h2>
+                    <p>使用我們的 AIO 分析器，發現您的關鍵字在 AI Overview 中的潛力，制定更有效的 SEO 策略。</p>
+                    <a href="#analyze" class="cta-button">開始分析</a>
+                    <a href="#learn-more" class="cta-button">了解更多</a>
+                </section>
+
+                <div class="grid">
+                    <div class="card">
+                        <h3><span class="card-icon">📈</span>SEO 趨勢分析</h3>
+                        <p>AI Overview 的興起正在改變搜尋行為和 SEO 最佳實踐。了解最新趨勢，保持競爭優勢。</p>
+                        
+                        <div class="keywords-section">
+                            <div class="keywords-title">相關關鍵字：</div>
+                            <div class="keywords-list">SEO 趨勢 2024, AI 搜尋趨勢, 未來 SEO 發展, 搜尋引擎演算法變化</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3><span class="card-icon">🎓</span>學習資源</h3>
+                        <p>提供豐富的學習材料，包括案例研究、最佳實踐指南和專家見解。</p>
+                        
+                        <div class="keywords-section">
+                            <div class="keywords-title">相關關鍵字：</div>
+                            <div class="keywords-list">AI Overview 教學, SEO 學習資源, 數位行銷課程, 搜尋優化指南</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <p>&copy; 2024 SiEtrendforce AIO 分析器測試網站</p>
+                <div class="footer-links">
+                    <a href="#privacy">隱私政策</a>
+                    <a href="#terms">使用條款</a>
+                    <a href="#contact">聯絡我們</a>
+                    <a href="#api">API 文檔</a>
+                </div>
+                <p><small>本網站專門用於測試 Google Search Console API 和 AI Overview 分析功能</small></p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 結構化數據 -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "AIO 分析器測試網站",
+        "description": "SiEtrendforce 專案的 AI Overview 潛力分析工具測試網站",
+        "url": "https://amandachien-pixel.github.io/aio_analyzer_project",
+        "author": {
+            "@type": "Organization",
+            "name": "SiEtrendforce"
+        },
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://amandachien-pixel.github.io/aio_analyzer_project?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <!-- Google Analytics (可選) -->
+    <!-- Global site tag (gtag.js) - 如果需要可以添加 -->
+</body>
+</html>

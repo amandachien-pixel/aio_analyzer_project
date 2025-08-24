@@ -1,0 +1,143 @@
+# AIO 分析器 - Git 忽略文件
+# ================================
+
+# 敏感配置文件 - 絕對不要上傳到 GitHub
+config/credentials.json
+config/google-ads.yaml
+config/oauth_credentials.json
+config/token.json
+config/temp_*.json
+.env
+.env.local
+.env.prod
+
+# API 金鑰和憑證
+*.json
+!config/credentials.json.template
+!config/*.template
+!github_files/*.json
+!package*.json
+
+# 私鑰和憑證
+*.pem
+*.key
+*.crt
+*.p12
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# 虛擬環境
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日誌文件
+logs/
+*.log
+
+# 輸出和報告
+output/
+reports/
+!local_preview/reports/*.csv
+temp/
+tmp/
+
+# 數據庫
+*.sqlite3
+*.db
+db.sqlite3
+
+# Docker
+.dockerignore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 測試文件
+test_*.csv
+*_test.csv
+temp_*.py
+
+# 備份文件
+*.bak
+*.backup
+*.old
+
+# 編輯器臨時文件
+.swp
+.swo
+.tmp
+
+# 系統文件
+.Trash-*
+.nfs*
+
+# 本地開發文件
+local_settings.py
+local_config.py
+
+# 部署相關
+docker-compose.override.yml
+.env.docker
+
+# 監控和日誌
+monitoring/data/
+grafana/data/
+prometheus/data/
+
+# 媒體文件（大文件）
+media/
+staticfiles/
+static/collected/
+
+# 快取
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 其他敏感文件
+secrets/
+private/
+confidential/

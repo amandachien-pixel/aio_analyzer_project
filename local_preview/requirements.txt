@@ -1,0 +1,28 @@
+# AIO 分析器本地預覽版依賴
+# =================================
+
+# Web 框架
+Flask>=2.3.0
+
+# 數據處理
+pandas>=2.0.0
+numpy>=1.24.0
+
+# 異步處理
+aiohttp>=3.8.0
+
+# 進度條
+tqdm>=4.65.0
+
+# 日誌
+colorlog>=6.7.0
+
+# 配置管理
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Google APIs (可選，用於真實數據)
+google-api-python-client>=2.100.0
+google-auth-httplib2>=0.1.1
+google-auth-oauthlib>=1.1.0
+google-ads>=22.1.0

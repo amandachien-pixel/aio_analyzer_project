@@ -1,0 +1,50 @@
+# Google Ads API 配置文件
+# ========================
+# 
+# 請從 Google Ads API 開發者控制台獲取以下資訊：
+# https://developers.google.com/google-ads/api/docs/first-call/overview
+#
+# 注意：請將此文件重命名為 google-ads.yaml 並填入實際的值
+
+# 開發者令牌 (Developer Token)
+# 從 Google Ads 帳戶的 API 中心獲取
+developer_token: "YOUR_DEVELOPER_TOKEN"
+
+# OAuth 2.0 設定
+# 從 Google Cloud Console 獲取
+client_id: "YOUR_CLIENT_ID.apps.googleusercontent.com"
+client_secret: "YOUR_CLIENT_SECRET"
+
+# 重新整理令牌 (Refresh Token)
+# 通過 OAuth 2.0 流程獲取
+refresh_token: "YOUR_REFRESH_TOKEN"
+
+# 登入客戶 ID (Manager Account ID)
+# 如果使用管理員帳戶，填入管理員帳戶 ID
+# 格式：123-456-7890（不含連字號也可以）
+login_customer_id: "YOUR_MANAGER_ACCOUNT_ID"
+
+# 目標客戶 ID (Target Customer ID)
+# 要分析的 Google Ads 帳戶 ID
+# 格式：123-456-7890（不含連字號也可以）
+customer_id: "YOUR_TARGET_CUSTOMER_ID"
+
+# API 版本設定（可選）
+# api_version: "v15"
+
+# 日誌設定（可選）
+# logging:
+#   version: 1
+#   disable_existing_loggers: False
+#   formatters:
+#     default_fmt:
+#       format: '[%(asctime)s - %(levelname)s] %(message)s'
+#       datefmt: '%Y-%m-%d %H:%M:%S'
+#   handlers:
+#     default_handler:
+#       class: logging.StreamHandler
+#       formatter: default_fmt
+#   loggers:
+#     "google.ads.googleads.client":
+#       level: INFO
+#       handlers: [default_handler]
